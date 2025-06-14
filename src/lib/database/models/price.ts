@@ -4,7 +4,7 @@ import { ICard } from "./card";
 export interface IPrice extends mongoose.Document {
     card: ICard;
     date: Date;
-    tgcMarketPrice?: number;
+    tcgMarketPrice?: number;
     priceChartingUngradedPrice?: number;
     priceChartingGrade7Price?: number;
     priceChartingGrade8Price?: number;
@@ -23,7 +23,7 @@ const PriceSchema = new mongoose.Schema<IPrice>({
         type: Date,
         required: true,
     },
-    tgcMarketPrice: {
+    tcgMarketPrice: {
         type: Number,
         required: false,
     },
