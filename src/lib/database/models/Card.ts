@@ -1,17 +1,18 @@
 import mongoose from "mongoose";
+import { ICardSet } from "./cardSet";
 
-export interface Card extends mongoose.Document {
+export interface ICard extends mongoose.Document {
     source: "api" | "manual";
     pokemonName: string;
-    tcgId: string;
+    tcgId?: string;
     cardName: string;
     cardNumber: string;
-    imageLink: string;
-    cardType: string;
-    tcgPlayerMarketPrice: number;
+    imageLink?: string;
+    cardType: "normal" | "holofoil" | "reverseHolofoil";
+    cardSet: ICardSet;
 }
 
-const CardSchema = new mongoose.Schema<Card>({
+const CardSchema = new mongoose.Schema<ICard>({
     source: {
         type: String,
         required: true,
@@ -26,7 +27,7 @@ const CardSchema = new mongoose.Schema<Card>({
     },
     cardName: {
         type: String,
-        required: false,
+        required: true,
     },
     cardNumber: {
         type: String,
@@ -40,10 +41,14 @@ const CardSchema = new mongoose.Schema<Card>({
         type: String,
         required: true,
     },
-    tcgPlayerMarketPrice: {
-        type: Number,
-        required: false,
+    cardSet: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CardSet",
+        required: true,
     },
 });
 
-export default mongoose.models.Card || mongoose.model<Card>("Card", CardSchema);
+CardSchema.index({ cardSet: 1, cardNumber: 1, cardType: 1 }, { unique: true });
+
+export default mongoose.models.Card ||
+    mongoose.model<ICard>("Card", CardSchema);

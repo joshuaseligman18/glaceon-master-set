@@ -4,6 +4,7 @@ export const ZTcgSet = z.object({
     id: z.string(),
     name: z.string(),
     series: z.string(),
+    releaseDate: z.coerce.date(),
 });
 
 export type TcgSet = z.infer<typeof ZTcgSet>;
@@ -18,8 +19,8 @@ export const ZTcgCard = z.object({
     }),
     tcgplayer: z.object({
         updatedAt: z.coerce.date(),
-        prices: z.record(
-            z.string(),
+        prices: z.partialRecord(
+            z.enum(["normal", "holofoil", "reverseHolofoil"]),
             z.object({
                 market: z.number().positive(),
             })

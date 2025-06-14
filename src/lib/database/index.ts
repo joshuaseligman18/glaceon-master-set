@@ -18,6 +18,7 @@ async function dbConnect(): Promise<mongoose.Connection> {
     if (cache.promise === null) {
         const opts: mongoose.ConnectOptions = {
             bufferCommands: false,
+            dbName: "app",
         };
         cache.promise = mongoose.connect(process.env.MONGODB_URI!, opts);
     }

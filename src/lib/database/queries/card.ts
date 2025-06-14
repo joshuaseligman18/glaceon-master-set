@@ -1,28 +1,51 @@
-import dbConnect from "..";
-import { TcgCard } from "../../tcgApi/types";
-import Card from "../models/Card";
+import dbConnect from "@/lib/database";
+import Card from "@/lib/database/models/card";
+import { TcgCard } from "@/lib/tcgApi/types";
+import { AnyBulkWriteOperation } from "mongoose";
+import { insertTcgSet } from "./cardSet";
 
 export async function insertTcgCards(
     cardsMap: Map<string, TcgCard[]>
 ): Promise<void> {
     await dbConnect();
 
-    for (const [pokemonName, cards] of cardsMap) {
-        const firstCard = cards[0];
+    const cardBulkWriteOperations: AnyBulkWriteOperation[] = [];
 
-        for (const [cardType, pricing] of Object.entries(
-            firstCard.tcgplayer.prices
-        )) {
-            await Card.create({
-                source: "api",
-                pokemonName: pokemonName,
-                tcgId: firstCard.id,
-                cardName: firstCard.name,
-                cardNumber: firstCard.number,
-                imageLink: firstCard.images.small,
-                cardType: cardType,
-                tcgPlayerMarketPrice: pricing.market,
-            });
+    for (const [pokemonName, cards] of cardsMap) {
+        for (const card of cards) {
+            const set = await insertTcgSet(card.set);
+
+            for (const [cardType, _pricing] of Object.entries(
+                card.tcgplayer.prices
+            )) {
+                const newCard = {
+                    source: "api",
+                    pokemonName: pokemonName,
+                    tcgId: card.id,
+                    cardName: card.name,
+                    cardNumber: card.number,
+                    imageLink: card.images.small,
+                    cardType: cardType as
+                        | "normal"
+                        | "holofoil"
+                        | "reverseHolofoil",
+                    cardSet: set,
+                };
+
+                cardBulkWriteOperations.push({
+                    updateOne: {
+                        filter: {
+                            cardSet: newCard.cardSet,
+                            cardNumber: newCard.cardNumber,
+                            cardType: newCard.cardType,
+                        },
+                        update: { $setOnInsert: newCard },
+                        upsert: true,
+                    },
+                });
+            }
         }
     }
+
+    await Card.bulkWrite(cardBulkWriteOperations, { ordered: false });
 }
