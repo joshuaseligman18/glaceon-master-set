@@ -9,43 +9,52 @@ export async function insertTcgCards(
 ): Promise<void> {
     await dbConnect();
 
-    const cardBulkWriteOperations: AnyBulkWriteOperation[] = [];
-
+    const cardBulkWritePromises: Promise<AnyBulkWriteOperation[]>[] = [];
     for (const [pokemonName, cards] of cardsMap) {
         for (const card of cards) {
-            const set = await insertTcgSet(card.set);
+            cardBulkWritePromises.push(
+                (async () => {
+                    const set = await insertTcgSet(card.set);
 
-            for (const [cardType, _pricing] of Object.entries(
-                card.tcgplayer.prices
-            )) {
-                const newCard = {
-                    source: "api",
-                    pokemonName: pokemonName,
-                    tcgId: card.id,
-                    cardName: card.name,
-                    cardNumber: card.number,
-                    imageLink: card.images.small,
-                    cardType: cardType as
-                        | "normal"
-                        | "holofoil"
-                        | "reverseHolofoil",
-                    cardSet: set,
-                };
+                    const resOperations: AnyBulkWriteOperation[] = [];
 
-                cardBulkWriteOperations.push({
-                    updateOne: {
-                        filter: {
-                            cardSet: newCard.cardSet,
-                            cardNumber: newCard.cardNumber,
-                            cardType: newCard.cardType,
-                        },
-                        update: { $setOnInsert: newCard },
-                        upsert: true,
-                    },
-                });
-            }
+                    for (const [cardType, _pricing] of Object.entries(
+                        card.tcgplayer.prices
+                    )) {
+                        const newCard = {
+                            source: "api",
+                            pokemonName: pokemonName,
+                            tcgId: card.id,
+                            cardName: card.name,
+                            cardNumber: card.number,
+                            imageLink: card.images.small,
+                            cardType: cardType as
+                                | "normal"
+                                | "holofoil"
+                                | "reverseHolofoil",
+                            cardSet: set,
+                        };
+
+                        resOperations.push({
+                            updateOne: {
+                                filter: {
+                                    cardSet: newCard.cardSet,
+                                    cardNumber: newCard.cardNumber,
+                                    cardType: newCard.cardType,
+                                },
+                                update: { $setOnInsert: newCard },
+                                upsert: true,
+                            },
+                        });
+                    }
+                    return resOperations;
+                })()
+            );
         }
     }
 
+    const cardBulkWriteOperations: AnyBulkWriteOperation[] = (
+        await Promise.all(cardBulkWritePromises)
+    ).flat();
     await Card.bulkWrite(cardBulkWriteOperations, { ordered: false });
 }
