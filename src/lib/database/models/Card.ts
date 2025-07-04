@@ -50,5 +50,13 @@ const CardSchema = new mongoose.Schema<ICard>({
 
 CardSchema.index({ cardSet: 1, cardNumber: 1, cardType: 1 }, { unique: true });
 
+CardSchema.virtual("prices", {
+    ref: "Price",
+    localField: "_id",
+    foreignField: "card",
+});
+CardSchema.set("toObject", { virtuals: true });
+CardSchema.set("toJSON", { virtuals: true });
+
 export default mongoose.models.Card ||
     mongoose.model<ICard>("Card", CardSchema);

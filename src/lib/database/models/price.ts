@@ -53,5 +53,5 @@ const PriceSchema = new mongoose.Schema<IPrice>({
     },
 });
 
-export default mongoose.models.PriceSchema ||
+export default mongoose.models.Price ||
     mongoose.model<IPrice>("Price", PriceSchema);

@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import "./models/card";
+import "./models/cardSet";
+import "./models/price";
 
 interface DatabaseCache {
     conn: mongoose.Connection | null;
@@ -25,6 +28,13 @@ async function dbConnect(): Promise<mongoose.Connection> {
 
     try {
         cache.conn = (await cache.promise).connection;
+
+        const requiredModels = ["CardSet", "Card", "Price"];
+        for (const name of requiredModels) {
+            if (!mongoose.modelNames().includes(name)) {
+                throw new Error(`Model '${name}' not registered`);
+            }
+        }
     } catch (err: any) {
         if (err instanceof Error) {
             throw err;

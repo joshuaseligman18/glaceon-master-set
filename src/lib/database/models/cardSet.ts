@@ -32,5 +32,13 @@ const CardSetSchema = new mongoose.Schema<ICardSet>({
     },
 });
 
+CardSetSchema.virtual("cards", {
+    ref: "Card",
+    localField: "_id",
+    foreignField: "cardSet",
+});
+CardSetSchema.set("toObject", { virtuals: true });
+CardSetSchema.set("toJSON", { virtuals: true });
+
 export default mongoose.models.CardSet ||
     mongoose.model<ICardSet>("CardSet", CardSetSchema);
