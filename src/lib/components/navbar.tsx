@@ -42,7 +42,7 @@ const Navbar: React.FC = async () => {
                             <button
                                 onClick={async () => {
                                     "use server";
-                                    await signIn("github", {
+                                    await signIn(undefined, {
                                         redirectTo: "/collection",
                                     });
                                 }}
