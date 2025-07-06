@@ -1,7 +1,7 @@
 import Footer from "@/lib/components/footer";
 import Navbar from "@/lib/components/navbar";
 import type { Metadata } from "next";
-import "./globals.css";
+import "./styles.css";
 
 export const metadata: Metadata = {
     title: "Glaceon Master Set",
@@ -17,7 +17,7 @@ export default function RootLayout({
         <html lang="en">
             <body className="flex flex-col min-h-screen w-full">
                 <Navbar />
-                {children}
+                <div className="mx-5">{children}</div>
                 <Footer />
             </body>
         </html>

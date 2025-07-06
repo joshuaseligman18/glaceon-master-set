@@ -1,18 +1,12 @@
-"use client";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import Table from "./table";
 
-const queryClient: QueryClient = new QueryClient();
+const CollectionPage: React.FC = async () => {
+    const session = await auth();
+    if (!session) return redirect("/");
 
-const CollectionPage: React.FC = () => {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <div className="mx-5">
-                <Table />
-            </div>
-        </QueryClientProvider>
-    );
+    return <Table />;
 };
 
 export default CollectionPage;

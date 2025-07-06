@@ -1,5 +1,5 @@
 import { ZTableData } from "@/lib/types/tableData";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 
 async function fetchPricingData() {
     const res = await fetch("/api/table");
@@ -11,8 +11,11 @@ async function fetchPricingData() {
 }
 
 export default function usePriceDataQuery() {
-    return useQuery({
-        queryKey: ["usePriceData"],
-        queryFn: fetchPricingData,
-    });
+    return useQuery(
+        {
+            queryKey: ["usePriceData"],
+            queryFn: fetchPricingData,
+        },
+        new QueryClient()
+    );
 }

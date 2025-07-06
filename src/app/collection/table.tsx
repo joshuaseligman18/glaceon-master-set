@@ -1,6 +1,8 @@
+"use client";
+
 import usePriceDataQuery from "./query";
 
-const CollectionTable: React.FC = () => {
+const Table: React.FC = () => {
     const dataQuery = usePriceDataQuery();
 
     return dataQuery.isFetching ? (
@@ -298,4 +300,4 @@ const CollectionTable: React.FC = () => {
     );
 };
 
-export default CollectionTable;
+export default Table;
