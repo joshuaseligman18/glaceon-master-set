@@ -1,7 +1,9 @@
-import { ZTableData } from "@/lib/types/tableData";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { TableData, ZTableData } from "@/lib/types/tableData";
+import { TransactionForm, ZTransactionForm } from "@/lib/types/transactionForm";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import * as z from "zod/v4";
 
-async function fetchPricingData() {
+async function fetchPricingData(): Promise<TableData> {
     const res = await fetch("/api/table");
     if (!res.ok) {
         throw new Error("Failed to fetch table data");
@@ -10,12 +12,52 @@ async function fetchPricingData() {
     return ZTableData.parse(data);
 }
 
-export default function usePriceDataQuery() {
-    return useQuery(
-        {
-            queryKey: ["usePriceData"],
-            queryFn: fetchPricingData,
+export function usePriceDataQuery(): UseQueryResult<TableData, Error> {
+    return useQuery({
+        queryKey: ["usePriceData"],
+        queryFn: fetchPricingData,
+    });
+}
+
+async function fetchTransactions(): Promise<TransactionForm[]> {
+    const res = await fetch("/api/transaction");
+    if (!res.ok) {
+        throw new Error("Failed to fetch table data");
+    }
+    const resData = await res.json();
+    try {
+        const data = z.array(ZTransactionForm).parse(resData);
+        return data;
+    } catch (err: any) {
+        console.error(err);
+        throw err;
+    }
+}
+
+export function useTransactionsQuery(): UseQueryResult<
+    TransactionForm[],
+    Error
+> {
+    return useQuery({
+        queryKey: ["useTransactions"],
+        queryFn: fetchTransactions,
+    });
+}
+
+export async function submitNewTransaction(newTransaction: FormData) {
+    const formData = Object.fromEntries(newTransaction.entries());
+    ZTransactionForm.parse(formData);
+    const response = await fetch("/api/transaction", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
         },
-        new QueryClient()
-    );
+        body: new URLSearchParams(
+            formData as Record<string, string>
+        ).toString(),
+    });
+    if (!response.ok) {
+        throw new Error("Failed to create new transaction");
+    }
+    return response.json();
 }

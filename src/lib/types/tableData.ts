@@ -12,6 +12,7 @@ const ZPrice = z.object({
     priceChartingGrade9Price: z.optional(z.float32()),
     priceChartingUngradedPrice: z.optional(z.float32()),
 });
+export type Price = z.infer<typeof ZPrice>;
 
 const ZCard = z.object({
     _id: z.string(),
@@ -25,6 +26,7 @@ const ZCard = z.object({
     tcgId: z.optional(z.string()),
     prices: z.array(ZPrice).min(1),
 });
+export type Card = z.infer<typeof ZCard>;
 
 const ZCardSet = z.object({
     _id: z.string(),
@@ -35,7 +37,9 @@ const ZCardSet = z.object({
     series: z.string(),
     cards: z.array(ZCard),
 });
+export type CardSet = z.infer<typeof ZCardSet>;
 
 const ZTableData = z.array(ZCardSet);
+export type TableData = z.infer<typeof ZTableData>;
 
 export { ZCard, ZCardSet, ZPrice, ZTableData };

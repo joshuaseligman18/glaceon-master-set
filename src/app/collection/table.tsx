@@ -1,9 +1,27 @@
 "use client";
 
-import usePriceDataQuery from "./query";
+import { TableData } from "@/lib/types/tableData";
+import { TransactionForm } from "@/lib/types/transactionForm";
+import {
+    QueryClient,
+    QueryClientProvider,
+    UseQueryResult,
+} from "@tanstack/react-query";
+import { usePriceDataQuery, useTransactionsQuery } from "./query";
+import CardTransactions from "./transactions";
 
 const Table: React.FC = () => {
-    const dataQuery = usePriceDataQuery();
+    return (
+        <QueryClientProvider client={new QueryClient()}>
+            <TableContents />
+        </QueryClientProvider>
+    );
+};
+
+const TableContents: React.FC = () => {
+    const dataQuery: UseQueryResult<TableData, Error> = usePriceDataQuery();
+    const transactionsQuery: UseQueryResult<TransactionForm[], Error> =
+        useTransactionsQuery();
 
     return dataQuery.isFetching ? (
         <p className="text-center">Fetching...</p>
@@ -37,6 +55,7 @@ const Table: React.FC = () => {
                                     <th>PSA 8</th>
                                     <th>PSA 7</th>
                                     <th>Ungraded</th>
+                                    <th>Transactions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -287,6 +306,14 @@ const Table: React.FC = () => {
                                                 ) : (
                                                     ""
                                                 )}
+                                            </td>
+                                            <td>
+                                                <CardTransactions
+                                                    transactionsQuery={
+                                                        transactionsQuery
+                                                    }
+                                                    card={card}
+                                                />
                                             </td>
                                         </tr>
                                     );
