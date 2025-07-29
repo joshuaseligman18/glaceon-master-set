@@ -61,3 +61,13 @@ export async function submitNewTransaction(newTransaction: FormData) {
     }
     return response.json();
 }
+
+export async function deleteTransaction(transactionId: string) {
+    const response = await fetch(`/api/transaction/${transactionId}`, {
+        method: "DELETE",
+    });
+    if (!response.ok) {
+        throw new Error("Failed to delete transaction");
+    }
+    return response.json();
+}

@@ -36,7 +36,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         }
 
         const data = await req.formData();
-        console.log(data);
         const formData = ZTransactionForm.parse(
             Object.fromEntries(data.entries())
         );

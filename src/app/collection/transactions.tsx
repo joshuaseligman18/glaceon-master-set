@@ -6,7 +6,7 @@ import {
     useQueryClient,
 } from "@tanstack/react-query";
 import React, { FormEventHandler } from "react";
-import { submitNewTransaction } from "./query";
+import { deleteTransaction, submitNewTransaction } from "./query";
 
 interface Props {
     transactionsQuery: UseQueryResult<TransactionForm[], Error>;
@@ -32,6 +32,25 @@ const CardTransactions: React.FC<Props> = ({ transactionsQuery, card }) => {
             new FormData(e.target as HTMLFormElement)
         );
     };
+
+    const deleteTransactionMutation = useMutation({
+        mutationFn: deleteTransaction,
+        onSuccess: () => {
+            client.invalidateQueries({ queryKey: ["useTransactions"] });
+        },
+        onError: (err) => {
+            console.error(err);
+        },
+    });
+
+    function handleDeleteRequest(transaction: TransactionForm) {
+        const deleteConfirmation: boolean = confirm(
+            `Are you sure you want to delete the transaction for ${card.cardName} #${card.cardNumber} (${card.cardType})? (Grade: ${transaction.grade}; Purchase date: ${transaction.date.toLocaleDateString()}; Purchase price: $${transaction.purchasePrice.toFixed(2)})`
+        );
+        if (deleteConfirmation) {
+            deleteTransactionMutation.mutate(transaction._id!);
+        }
+    }
 
     return (
         <div className="drawer drawer-end">
@@ -164,6 +183,18 @@ const CardTransactions: React.FC<Props> = ({ transactionsQuery, card }) => {
                                                                 2
                                                             )}
                                                         </p>
+                                                        <div className="card-actions justify-end">
+                                                            <button
+                                                                className="btn btn-xs btn-error"
+                                                                onClick={() =>
+                                                                    handleDeleteRequest(
+                                                                        trans
+                                                                    )
+                                                                }
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             );
