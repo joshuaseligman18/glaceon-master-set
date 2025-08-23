@@ -1,4 +1,4 @@
-import { Card } from "@/lib/types/tableData";
+import { Card } from "@/lib/types/models";
 import { TransactionForm } from "@/lib/types/transactionForm";
 import {
     UseQueryResult,
