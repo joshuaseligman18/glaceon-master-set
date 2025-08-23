@@ -1,4 +1,5 @@
 import { Card, ZCard } from "@/lib/types/models";
+import { TransactionForm, ZTransactionForm } from "@/lib/types/transactionForm";
 import {
     QueryFunctionContext,
     UseQueryResult,
@@ -27,5 +28,33 @@ export function useCardHistoryQuery(id: string): UseQueryResult<Card, Error> {
     return useQuery({
         queryKey: ["cardHistory", id],
         queryFn: fetchCardHistory,
+    });
+}
+
+async function fetchCardTransactions(
+    context: QueryFunctionContext
+): Promise<TransactionForm[]> {
+    const queryKey = z.array(z.string()).length(2).parse(context.queryKey);
+
+    const res = await fetch(`/api/transaction/card/${queryKey[1]}`);
+    if (!res.ok) {
+        throw new Error("Failed to fetch card transaction data");
+    }
+    const resData = await res.json();
+    try {
+        const data = z.array(ZTransactionForm).parse(resData);
+        return data;
+    } catch (err: any) {
+        console.error(err);
+        throw err;
+    }
+}
+
+export function useCardTransactionsQuery(
+    id: string
+): UseQueryResult<TransactionForm[], Error> {
+    return useQuery({
+        queryKey: ["cardTransactions", id],
+        queryFn: fetchCardTransactions,
     });
 }
