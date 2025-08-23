@@ -1,4 +1,4 @@
-import { TableData, ZTableData } from "@/lib/types/models";
+import { TableData, ZTableData } from "@/lib/types/tableData";
 import { TransactionForm, ZTransactionForm } from "@/lib/types/transactionForm";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import * as z from "zod/v4";

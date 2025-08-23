@@ -1,4 +1,5 @@
-import { Card, TableData } from "@/lib/types/tableData";
+import { Card } from "@/lib/types/models";
+import { TableData } from "@/lib/types/tableData";
 import { TransactionForm } from "@/lib/types/transactionForm";
 import { useEffect, useState } from "react";
 

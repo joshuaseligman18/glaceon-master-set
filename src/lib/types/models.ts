@@ -39,7 +39,4 @@ const ZCardSet = z.object({
 });
 export type CardSet = z.infer<typeof ZCardSet>;
 
-const ZTableData = z.array(ZCardSet);
-export type TableData = z.infer<typeof ZTableData>;
-
-export { ZCard, ZCardSet, ZPrice, ZTableData };
+export { ZCard, ZCardSet, ZPrice };
