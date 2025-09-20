@@ -1,3 +1,4 @@
+import dbConnect from "@/lib/database";
 import { auth } from "@/auth";
 import Card from "@/lib/database/models/card";
 import { insertPriceChartingPricing } from "@/lib/database/queries/price";
@@ -7,6 +8,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
     try {
+        await dbConnect();
+
         const session = await auth();
         if (!session) {
             return NextResponse.json("User is not authenticated", {
