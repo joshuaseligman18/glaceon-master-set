@@ -58,7 +58,7 @@ const TableContents: React.FC = () => {
         </p>
     ) : (
         <React.Fragment>
-            {dataQuery.data && transactionsQuery.data && (
+            {tableData && transactionsQuery.data && (
                 <Valuation
                     tableData={tableData}
                     transactions={transactionsQuery.data}
