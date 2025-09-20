@@ -15,6 +15,9 @@ const Navbar: React.FC = async () => {
                 <div className="flex-none">
                     <ul className="menu menu-horizontal px-1">
                         <li>
+                            <Link href="/newCardForm">Add Card</Link>
+                        </li>
+                        <li>
                             <button
                                 onClick={async () => {
                                     "use server";

@@ -1,10 +1,9 @@
-import { Card } from "@/lib/types/models";
-import { TableData } from "@/lib/types/tableData";
+import { Card, CardSet } from "@/lib/types/models";
 import { TransactionForm } from "@/lib/types/transactionForm";
 import { useEffect, useState } from "react";
 
 interface Props {
-    tableData: TableData;
+    tableData: CardSet[];
     transactions: TransactionForm[];
 }
 
@@ -18,9 +17,9 @@ const Valuation: React.FC<Props> = ({ tableData, transactions }) => {
     const [totalPurchasePrice, setTotalPurchasePrice] = useState<number>(0);
 
     useEffect(() => {
-        const cards: Card[] = tableData.map((set) => set.cards).flat();
+        const cards: Card[] = tableData?.map((set) => set.cards).flat();
 
-        if (tableData.length > 0) {
+        if (tableData?.length > 0) {
             let marketMissing = 0;
             const newMarketValue = transactions.reduce((curSum, trans) => {
                 const theCard: Card | undefined = cards.find(

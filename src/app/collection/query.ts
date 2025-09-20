@@ -1,3 +1,7 @@
+import {
+    CollectionPricePoint,
+    ZCollectionPricePoint,
+} from "@/lib/types/collectionPriceHistory";
 import { TableData, ZTableData } from "@/lib/types/tableData";
 import { TransactionForm, ZTransactionForm } from "@/lib/types/transactionForm";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
@@ -70,4 +74,29 @@ export async function deleteTransaction(transactionId: string) {
         throw new Error("Failed to delete transaction");
     }
     return response.json();
+}
+
+async function fetchCollectionPriceHistory(): Promise<CollectionPricePoint[]> {
+    const res = await fetch("/api/history/collection");
+    if (!res.ok) {
+        throw new Error("Failed to fetch collection price history");
+    }
+    const resData = await res.json();
+    try {
+        const data = z.array(ZCollectionPricePoint).parse(resData);
+        return data;
+    } catch (err: any) {
+        console.error(err);
+        throw err;
+    }
+}
+
+export function useCollectionPriceHistoryQuery(): UseQueryResult<
+    CollectionPricePoint[],
+    Error
+> {
+    return useQuery({
+        queryKey: ["useCollectionPriceHistory"],
+        queryFn: fetchCollectionPriceHistory,
+    });
 }

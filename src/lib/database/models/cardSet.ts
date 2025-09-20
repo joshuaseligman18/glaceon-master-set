@@ -28,6 +28,7 @@ const CardSetSchema = new mongoose.Schema<ICardSet>({
     },
     priceChartingBaseUrl: {
         type: String,
+        ref: "User",
         required: true,
     },
 });

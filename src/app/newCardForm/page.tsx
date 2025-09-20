@@ -1,11 +1,12 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import FormWrapper from "./form";
 
-const CollectionHistoryPage: React.FC = async () => {
+const NewCardForm: React.FC = async () => {
     const session = await auth();
     if (!session) return redirect("/");
 
-    return <h1>Collection history page</h1>;
+    return <FormWrapper />;
 };
 
-export default CollectionHistoryPage;
+export default NewCardForm;
