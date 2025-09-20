@@ -8,6 +8,7 @@ import {
     UseQueryResult,
 } from "@tanstack/react-query";
 import React from "react";
+import CollectionHistoryChart from "./historyChart";
 import { usePriceDataQuery, useTransactionsQuery } from "./query";
 import CardTransactions from "./transactions";
 import Valuation from "./valuation";
@@ -39,6 +40,7 @@ const TableContents: React.FC = () => {
                     transactions={transactionsQuery.data}
                 />
             )}
+            <CollectionHistoryChart />
             {dataQuery.data &&
                 dataQuery.data.map((set) => {
                     return (

@@ -19,7 +19,9 @@ const CardTransactions: React.FC<Props> = ({ transactionsQuery, card }) => {
     const newTransactionMutation = useMutation({
         mutationFn: submitNewTransaction,
         onSuccess: () => {
-            client.invalidateQueries({ queryKey: ["useTransactions"] });
+            client.invalidateQueries({
+                queryKey: ["useTransactions", "useCollectionPriceHistory"],
+            });
         },
         onError: (err) => {
             console.error(err);
@@ -36,7 +38,9 @@ const CardTransactions: React.FC<Props> = ({ transactionsQuery, card }) => {
     const deleteTransactionMutation = useMutation({
         mutationFn: deleteTransaction,
         onSuccess: () => {
-            client.invalidateQueries({ queryKey: ["useTransactions"] });
+            client.invalidateQueries({
+                queryKey: ["useTransactions", "useCollectionPriceHistory"],
+            });
         },
         onError: (err) => {
             console.error(err);
