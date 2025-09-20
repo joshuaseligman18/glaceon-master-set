@@ -25,7 +25,9 @@ interface Props {
 
 const CardHistoryChart: React.FC<Props> = ({ card }) => {
     const [renderColor, setRenderColor] = useState<string>();
-    const [cardGrade, setCardGrade] = useState<string>("market");
+    const [cardGrade, setCardGrade] = useState<string>(
+        card.source === "api" ? "market" : "10"
+    );
     const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
     const [toDate, setToDate] = useState<Date | undefined>(undefined);
 
@@ -89,7 +91,9 @@ const CardHistoryChart: React.FC<Props> = ({ card }) => {
                         value={cardGrade}
                         onChange={(e) => setCardGrade(e.target.value)}
                     >
-                        <option value="market">Market</option>
+                        {card.source === "api" && (
+                            <option value="market">Market</option>
+                        )}
                         <option value="10">PSA 10</option>
                         <option value="9.5">PSA 9.5</option>
                         <option value="9">PSA 9</option>

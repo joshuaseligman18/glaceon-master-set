@@ -10,12 +10,14 @@ interface Props {
 const CardInfo: React.FC<Props> = ({ card, transactions }) => {
     return (
         <div className="flex flex-row space-x-5">
-            <Image
-                src={card.imageLink}
-                alt="Picture of the card"
-                width={245}
-                height={342}
-            />
+            {card.imageLink && (
+                <Image
+                    src={card.imageLink}
+                    alt="Picture of the card"
+                    width={245}
+                    height={342}
+                />
+            )}
             <div className="border-1 p-3 w-full space-y-3">
                 <div>
                     <h2 className="font-bold text-xl">Info</h2>

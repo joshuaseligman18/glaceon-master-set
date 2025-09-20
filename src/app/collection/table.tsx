@@ -1,5 +1,6 @@
 "use client";
 
+import { CardSet } from "@/lib/types/models";
 import { TableData } from "@/lib/types/tableData";
 import { TransactionForm } from "@/lib/types/transactionForm";
 import {
@@ -7,7 +8,7 @@ import {
     QueryClientProvider,
     UseQueryResult,
 } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CollectionHistoryChart from "./historyChart";
 import { usePriceDataQuery, useTransactionsQuery } from "./query";
 import CardTransactions from "./transactions";
@@ -26,6 +27,29 @@ const TableContents: React.FC = () => {
     const transactionsQuery: UseQueryResult<TransactionForm[], Error> =
         useTransactionsQuery();
 
+    const [tableData, setTableDate] = useState<CardSet[] | null>(null);
+
+    useEffect(() => {
+        if (dataQuery.isSuccess && dataQuery.data) {
+            const newTableData = dataQuery.data.apiData;
+
+            if (dataQuery.data.manualData.length > 0) {
+                const newSet: CardSet = {
+                    _id: "",
+                    tcgId: "",
+                    name: "Manually Added Cards",
+                    priceChartingBaseUrl: "",
+                    releaseDate: new Date(),
+                    series: "",
+                    cards: dataQuery.data.manualData,
+                };
+                newTableData.push(newSet);
+            }
+
+            setTableDate(newTableData);
+        }
+    }, [dataQuery.isSuccess, dataQuery.data]);
+
     return dataQuery.isFetching ? (
         <p className="text-center">Fetching...</p>
     ) : dataQuery.isError ? (
@@ -36,21 +60,27 @@ const TableContents: React.FC = () => {
         <React.Fragment>
             {dataQuery.data && transactionsQuery.data && (
                 <Valuation
-                    tableData={dataQuery.data}
+                    tableData={tableData}
                     transactions={transactionsQuery.data}
                 />
             )}
             <CollectionHistoryChart />
-            {dataQuery.data &&
-                dataQuery.data.map((set) => {
+            {tableData &&
+                tableData.map((set) => {
                     return (
                         <div key={set._id} className="my-5">
-                            <h1 className="text-md font-bold">
-                                {set.name} ({set.series},{" "}
-                                {set.releaseDate.getMonth() + 1}/
-                                {set.releaseDate.getDate()}/
-                                {set.releaseDate.getFullYear()})
-                            </h1>
+                            {set.name === "Manually Added Cards" ? (
+                                <h1 className="text-md font-bold">
+                                    {set.name}
+                                </h1>
+                            ) : (
+                                <h1 className="text-md font-bold">
+                                    {set.name} ({set.series},{" "}
+                                    {set.releaseDate.getMonth() + 1}/
+                                    {set.releaseDate.getDate()}/
+                                    {set.releaseDate.getFullYear()})
+                                </h1>
+                            )}
                             <div className="overflow-x-auto">
                                 <table className="table table-sm">
                                     <thead>

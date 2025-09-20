@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import "./models/card";
 import "./models/cardSet";
 import "./models/price";
+import "./models/transaction";
 
 interface DatabaseCache {
     conn: mongoose.Connection | null;
